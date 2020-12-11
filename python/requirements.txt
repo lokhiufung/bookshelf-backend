@@ -1,0 +1,7 @@
+# server builder
+fastapi
+uvicorn
+
+# mongo ORM
+pymongo
+motor
