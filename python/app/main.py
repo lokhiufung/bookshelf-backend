@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from 
+# from 
 from .db.mongo_utils import close_mongo_connection, connect_to_mongo
 
 app = FastAPI()

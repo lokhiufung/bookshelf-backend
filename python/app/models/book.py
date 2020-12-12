@@ -8,11 +8,6 @@ class Book(BaseModel):
     description: Optional[str] = None
     tags: List[str]
 
-    class Config(BaseConfig):
-        title = 'Deep Learning'
-        description = 'A cook book for deep learning practitioner'
-        tags = ['DeepLearning']
-
 
 class BookFilterParams(BaseModel):
     title: str

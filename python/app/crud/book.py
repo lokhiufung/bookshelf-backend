@@ -4,8 +4,8 @@ from bson import ObjectId
 from ..models.book import BookFilterParams, BookInDB
 from ..db.mongodb import AsyncIOMotorClient
 
+from ..config import DATABASE_NAME, BOOK_COLLECTION
 
-from config import DATABASE_NAME, BOOK_COLLECTION
 
 async def get_books_with_filters(
     conn: AsyncIOMotorClient, filters: BookFilterParams
