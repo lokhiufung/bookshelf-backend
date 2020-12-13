@@ -1,2 +1,2 @@
-DATABASE_NAME = ''
-BOOK_COLLECTION = ''
+DATABASE_NAME = 'bookshelf'
+BOOK_COLLECTION = 'book'

@@ -273,3 +273,4 @@ dmypy.json
 
 # custom
 .vscode/
+test.py

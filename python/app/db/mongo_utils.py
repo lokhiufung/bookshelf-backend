@@ -1,6 +1,6 @@
 from motor.motor_asyncio import AsyncIOMotorClient
 
-from.mongodb import db
+from .mongodb import db
 
 async def connect_to_mongo():
     db.client = AsyncIOMotorClient()
