@@ -1,13 +1,15 @@
 from typing import List, Optional
 from bson import ObjectId
 
-from ..models.book import BookFilterParams, BookInDB, Book
+from ..models.book import BookFilterParams, BookInDB, BookInServer, BookBase
 from ..db.mongodb import AsyncIOMotorClient
 
 from ..config import DATABASE_NAME, BOOK_COLLECTION
 
+# __all__ = ['get_books_by_filters', 'create_books', 'delete_books_by_ids']
 
-async def get_books_with_filters(
+
+async def get_books_by_filters(
     conn: AsyncIOMotorClient, filters: BookFilterParams
 ) -> List[BookInDB]:
     
@@ -16,8 +18,7 @@ async def get_books_with_filters(
     query = {}
     if filters.title:
         # search book with an EXACT title
-        title = filters.title
-        query['title'] = { '$in': title }
+        query['title'] = filters.title 
     elif filters.tags:
         tags = filters.tags
         query['tags'] = { '$in': tags}
@@ -36,19 +37,52 @@ async def get_books_with_filters(
 
 
 async def create_books(
-    conn: AsyncIOMotorClient, books: List[Book]
-) -> List[BookInDB]:
+    conn: AsyncIOMotorClient, books: List[BookBase]
+) -> dict:
+    books_ = []
+    for book_base in books:
+        books_.append(BookInServer(
+            **book_base.dict(),
+            book_id = str(ObjectId())
+        ))
+    insert_result = await conn[DATABASE_NAME][BOOK_COLLECTION].insert_many([book.dict() for book in books_])
+    created_ids = [id_ for id_ in insert_result.inserted_ids]
+    return {
+        'created_ids': created_ids,
+        'created_count': len(created_ids)
+    }
 
-    insert_result = await conn[DATABASE_NAME][BOOK_COLLECTION].insert_many([book.dict() for book in books])
-    created_ids = insert_result.inserted_ids
-    return created_ids
 
-
-async def delete_books(
-    conn: AsyncIOMotorClient, ids: List[ObjectId]
-) -> List[BookInDB]:
+async def delete_book_by_filters(
+    conn: AsyncIOMotorClient, filters: BookFilterParams
+) -> dict:
     query = {}
-    query['_id'] = {'$in': ids}
-    deleted = await conn[DATABASE_NAME][BOOK_COLLECTION].delete_many(query)
-    return deleted.deleted_count
+    if filters.title:
+        query['title'] = filters.title
+    elif filters.book_id:
+        query['book_id'] = filters.book_id
+    
+    deleted = await conn[DATABASE_NAME][BOOK_COLLECTION].delete_one(query)
+    deleted_count = deleted.deleted_count 
+    return {
+        'deleted_count': deleted_count
+    }
 
+
+async def update_book_by_filters(
+    conn: AsyncIOMotorClient, filters: BookFilterParams, book: BookInServer
+) -> dict:
+    query = {}
+    if filters.title:
+        query['title'] = filters.title
+    elif filters.book_id:
+        query['book_id'] = filters.book_id
+    
+    update_dict = {k: v for k, v in book.dict().items() if v}
+    updated = await conn[DATABASE_NAME][BOOK_COLLECTION].update_one(
+        query, {
+            '$set': update_dict
+        })
+    return {
+        'updated_count': updated.modified_count
+    }
