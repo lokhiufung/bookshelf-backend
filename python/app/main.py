@@ -2,13 +2,23 @@ from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
-
+from fastapi.middleware.cors import CORSMiddleware
 
 from .api.books import router as books_router
 from .db.mongo_utils import close_mongo_connection, connect_to_mongo
 
 
 app = FastAPI()
+origins = [
+    '*'
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.exception_handler(RequestValidationError)

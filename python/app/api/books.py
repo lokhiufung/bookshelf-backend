@@ -15,12 +15,11 @@ from ..models.book import (
 router = APIRouter()
 
 
-@router.get('/', tags=['book-crud', 'search'])
+@router.post('/', tags=['book-crud', 'search'])
 async def search_books_by_filters(
     filters: BookFilterParams,
     db: AsyncIOMotorClient = Depends(get_database)
 ):
-    raise Exception
     dbbooks = await book_crud.get_books_by_filters(
         db, filters
     )
