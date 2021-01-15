@@ -15,7 +15,7 @@ from ..models.book import (
 router = APIRouter()
 
 
-@router.post('/', tags=['book-crud', 'search'])
+@router.post('/book', tags=['book-crud', 'search'])
 async def search_books_by_filters(
     filters: BookFilterParams,
     db: AsyncIOMotorClient = Depends(get_database)
@@ -28,7 +28,7 @@ async def search_books_by_filters(
     )
 
 
-@router.post('/bulk', tags=['book-crud'])
+@router.post('/book/bulk', tags=['book-crud'])
 async def create_books(
     books: List[BookBase],
     db: AsyncIOMotorClient = Depends(get_database)
@@ -41,7 +41,7 @@ async def create_books(
     )
 
 
-@router.delete('/', tags=['book-crud'])
+@router.delete('/book', tags=['book-crud'])
 async def delete_book(
     filters: BookFilterParams,
     db: AsyncIOMotorClient = Depends(get_database),
@@ -52,7 +52,7 @@ async def delete_book(
     )
 
 
-@router.put('/', tags=['book-crud'])
+@router.put('/book', tags=['book-crud'])
 async def udpate_book(
     filters: BookFilterParams,
     book: BookBase,

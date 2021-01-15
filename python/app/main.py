@@ -40,4 +40,4 @@ async def unhandled_exception_handler(request: Request, exc: Exception):
 app.add_event_handler('startup', connect_to_mongo)
 app.add_event_handler('shutdown', close_mongo_connection)
 
-app.include_router(books_router, prefix='/book')
+app.include_router(books_router)
